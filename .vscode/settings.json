@@ -1,0 +1,53 @@
+{
+  "cSpell.language": "en,es",
+  "cSpell.words": [
+    "airbnb",
+    "altan",
+    "Altan",
+    "Altán",
+    "argb",
+    "Assignated",
+    "atps",
+    "CFETEIT",
+    "cobcen",
+    "COBCEN",
+    "dayjs",
+    "ecma",
+    "entregable",
+    "Entregable",
+    "entregables",
+    "esnext",
+    "exceljs",
+    "formik",
+    "idtx",
+    "inegi",
+    "latin",
+    "montserrat",
+    "Murete",
+    "officedocument",
+    "openapi",
+    "openxmlformats",
+    "planeación",
+    "plusplus",
+    "pokedex",
+    "Pokedex",
+    "pokemon",
+    "spreadsheetml",
+    "subpartida",
+    "subpartidas",
+    "teit",
+    "toastify"
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.format": "explicit"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.renderWhitespace": "all",
+  "editor.tabSize": 2,
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  }
+}
