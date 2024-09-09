@@ -6,9 +6,9 @@ import {
 } from '@nestjs/common';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from '../prisma.service';
 import { Pokemon } from '@prisma/client';
-import { isValidUUID } from 'src/common/helpers/uuid.helper';
+import { isValidUUID } from '../common/helpers/uuid.helper';
 
 @Injectable()
 export class PokemonService {
@@ -61,8 +61,8 @@ export class PokemonService {
     return pokemon;
   }
 
-  async update(term: string, updatePokemonDto: UpdatePokemonDto) {
-    const pokemon = await this.findOne(term);
+  async update(id: string, updatePokemonDto: UpdatePokemonDto) {
+    const pokemon = await this.findOne(id);
 
     try {
       const updatedPokemon = await this.prisma.pokemon.update({
