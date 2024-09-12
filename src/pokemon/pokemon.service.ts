@@ -1,4 +1,4 @@
-import {
+/* import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
@@ -100,3 +100,4 @@ export class PokemonService {
     );
   }
 }
+ */

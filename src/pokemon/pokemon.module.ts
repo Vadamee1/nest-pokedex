@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+/* import { Module } from '@nestjs/common';
 import { PokemonService } from './pokemon.service';
 import { PokemonController } from './pokemon.controller';
 import { PrismaService } from 'src/prisma.service';
@@ -8,3 +8,4 @@ import { PrismaService } from 'src/prisma.service';
   providers: [PokemonService, PrismaService],
 })
 export class PokemonModule {}
+ */

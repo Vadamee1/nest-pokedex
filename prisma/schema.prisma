@@ -8,27 +8,27 @@ datasource db {
 }
 
 model Ability {
-  id           Int      @id
-  name         String   @db.VarChar(20)
-  effect       String   @db.VarChar(1000)
-  shortEffect  String   @map("short_effect") @db.VarChar(1000)
-  effectChange String   @map("effect_change") @db.VarChar(1000)
-  pokemonId    String?  @map("pokemon_id")
-  pokemon      Pokemon? @relation(fields: [pokemonId], references: [id])
+  id             Int              @id
+  name           String           @db.VarChar(50)
+  effect         String?
+  shortEffect    String?          @map("short_effect")
+  effectChange   String?          @map("effect_change")
+  PokemonAbility PokemonAbility[]
 
-  @@map("abilitie")
+  @@map("ability")
 }
 
 model Move {
-  id          Int      @id
-  name        String   @db.VarChar(20)
-  damageClass String   @map("damage_class") @db.VarChar(10)
-  efect       String   @db.VarChar(1000)
-  power       Int
+  id          Int           @id
+  name        String
+  damageClass String        @map("damage_class")
+  effect      String
+  power       Int?
   pp          Int
   priority    Int
-  pokemonId   String?  @map("pokemon_id")
-  pokemon     Pokemon? @relation(fields: [pokemonId], references: [id])
+  typeId      Int           @map("type_id")
+  type        Type          @relation(fields: [typeId], references: [id])
+  PokemonMove PokemonMove[]
 
   @@map("move")
 }
@@ -84,6 +84,7 @@ model Type {
   icon                 String    @db.VarChar(255)
   PokemonType          Pokemon[] @relation("PokemonType")
   SecondaryPokemonType Pokemon[] @relation("SecondaryPokemonType")
+  Move                 Move[]
 
   @@map("type")
 }
@@ -100,10 +101,32 @@ model Pokemon {
   type          Type @relation(fields: [typeId], references: [id], name: "PokemonType")
   secondaryType Type @relation(fields: [secondaryTypeId], references: [id], name: "SecondaryPokemonType")
 
-  Abilities Ability[]
-  Moves     Move[]
-  Sprites   Sprite[]
-  Stat      Stat[]
+  Sprites        Sprite[]
+  Stat           Stat[]
+  PokemonAbility PokemonAbility[]
+  PokemonMove    PokemonMove[]
 
   @@map("pokemon")
+}
+
+model PokemonAbility {
+  id        Int    @id
+  pokemonId String @map("pokemon_id")
+  abilityId Int    @map("ability_id")
+
+  pokemon Pokemon @relation(fields: [pokemonId], references: [id])
+  ability Ability @relation(fields: [abilityId], references: [id])
+
+  @@map("pokemon_ability")
+}
+
+model PokemonMove {
+  id        Int    @id
+  pokemonId String @map("pokemon_id")
+  moveId    Int    @map("move_id")
+
+  pokemon Pokemon @relation(fields: [pokemonId], references: [id])
+  move    Move    @relation(fields: [moveId], references: [id])
+
+  @@map("pokemon_move")
 }
