@@ -99,17 +99,71 @@ export class SeedService {
   }
 
   async pokemonSeed() {
-    const data = await fetch('https://pokeapi.co/api/v2/pokemon?limit=2').then(
-      (res) => res.json(),
-    );
+    const data = await fetch(
+      'https://pokeapi.co/api/v2/pokemon?limit=1025',
+    ).then((res) => res.json());
 
-    const detailPokemons: Pokemon[] = await Promise.all(
+    const detailPokemons = await Promise.all(
       data.results.map(async (pokemon) => {
         const detail = await this.getPokemonDetail(pokemon.name, pokemon.url);
         return detail;
       }),
     );
-    console.log(detailPokemons);
+
+    detailPokemons.map(async ({ pokemon, abilities, moves }) => {
+      const pokemonId = await this.prisma.pokemon.upsert({
+        create: pokemon,
+        update: {},
+        where: { id: pokemon.id },
+        select: {
+          id: true,
+        },
+      });
+
+      try {
+        await this.prisma.$transaction(
+          abilities.map(({ id }) =>
+            this.prisma.pokemonAbility.upsert({
+              create: {
+                abilityId: id,
+                pokemonId: pokemonId.id,
+              },
+              update: {},
+              where: {
+                abilityId_pokemonId: {
+                  abilityId: id,
+                  pokemonId: pokemonId.id,
+                },
+              },
+            }),
+          ),
+        );
+      } catch (error) {
+        console.log(error);
+      }
+
+      try {
+        await this.prisma.$transaction(
+          moves.map(({ id }) =>
+            this.prisma.pokemonMove.upsert({
+              create: {
+                moveId: id,
+                pokemonId: pokemonId.id,
+              },
+              update: {},
+              where: {
+                pokemonId_moveId: {
+                  pokemonId: pokemonId.id,
+                  moveId: id,
+                },
+              },
+            }),
+          ),
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    });
   }
 
   private async getIconType(name: string) {
@@ -214,7 +268,15 @@ export class SeedService {
         secondaryTypeId: secondaryTypeIdDB.id,
       };
 
-      return pokemon;
+      const abilities = data.abilities.map((ability) => ({
+        id: +ability.ability.url.split('/').at(-2)!,
+      }));
+
+      const moves = data.moves.map((move) => ({
+        id: +move.move.url.split('/').at(-2)!,
+      }));
+
+      return { pokemon, abilities, moves };
     } catch (error) {
       console.log(`Error fetching details for move ${name}:`, error);
     }

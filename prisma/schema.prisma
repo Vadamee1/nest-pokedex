@@ -96,10 +96,10 @@ model Pokemon {
   height          Int
   weight          Int
   typeId          Int    @map("type_id")
-  secondaryTypeId Int    @map("secondary_type_id")
+  secondaryTypeId Int?   @map("secondary_type_id")
 
-  type          Type @relation(fields: [typeId], references: [id], name: "PokemonType")
-  secondaryType Type @relation(fields: [secondaryTypeId], references: [id], name: "SecondaryPokemonType")
+  type          Type  @relation(fields: [typeId], references: [id], name: "PokemonType")
+  secondaryType Type? @relation(fields: [secondaryTypeId], references: [id], name: "SecondaryPokemonType")
 
   Sprites        Sprite[]
   Stat           Stat[]
@@ -110,23 +110,25 @@ model Pokemon {
 }
 
 model PokemonAbility {
-  id        Int    @id
+  id        Int    @id @default(autoincrement())
   pokemonId String @map("pokemon_id")
   abilityId Int    @map("ability_id")
 
   pokemon Pokemon @relation(fields: [pokemonId], references: [id])
   ability Ability @relation(fields: [abilityId], references: [id])
 
+  @@unique([abilityId, pokemonId])
   @@map("pokemon_ability")
 }
 
 model PokemonMove {
-  id        Int    @id
+  id        Int    @id @default(autoincrement())
   pokemonId String @map("pokemon_id")
   moveId    Int    @map("move_id")
 
   pokemon Pokemon @relation(fields: [pokemonId], references: [id])
   move    Move    @relation(fields: [moveId], references: [id])
 
+  @@unique([pokemonId, moveId])
   @@map("pokemon_move")
 }

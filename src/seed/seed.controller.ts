@@ -8,9 +8,9 @@ export class SeedController {
   @Get()
   async executeSeed() {
     await this.seedService.typeSeed();
-    this.seedService.moveSeed();
-    this.seedService.pokemonSeed();
-    this.seedService.abilitySeed();
+    await this.seedService.moveSeed();
+    await this.seedService.abilitySeed();
+    await this.seedService.pokemonSeed();
     return 'all databases are seeding';
   }
 }

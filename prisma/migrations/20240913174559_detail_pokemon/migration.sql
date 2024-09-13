@@ -2,14 +2,13 @@
   Warnings:
 
   - Added the required column `height` to the `pokemon` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `secondary_type_id` to the `pokemon` table without a default value. This is not possible if the table is not empty.
   - Added the required column `type_id` to the `pokemon` table without a default value. This is not possible if the table is not empty.
   - Added the required column `weight` to the `pokemon` table without a default value. This is not possible if the table is not empty.
 
 */
 -- AlterTable
 ALTER TABLE "pokemon" ADD COLUMN     "height" INTEGER NOT NULL,
-ADD COLUMN     "secondary_type_id" INTEGER NOT NULL,
+ADD COLUMN     "secondary_type_id" INTEGER,
 ADD COLUMN     "type_id" INTEGER NOT NULL,
 ADD COLUMN     "weight" INTEGER NOT NULL;
 
@@ -94,7 +93,7 @@ CREATE TABLE "type" (
 
 -- CreateTable
 CREATE TABLE "pokemon_ability" (
-    "id" INTEGER NOT NULL,
+    "id" SERIAL NOT NULL,
     "pokemon_id" TEXT NOT NULL,
     "ability_id" INTEGER NOT NULL,
 
@@ -103,12 +102,18 @@ CREATE TABLE "pokemon_ability" (
 
 -- CreateTable
 CREATE TABLE "pokemon_move" (
-    "id" INTEGER NOT NULL,
+    "id" SERIAL NOT NULL,
     "pokemon_id" TEXT NOT NULL,
     "move_id" INTEGER NOT NULL,
 
     CONSTRAINT "pokemon_move_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "pokemon_ability_ability_id_pokemon_id_key" ON "pokemon_ability"("ability_id", "pokemon_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "pokemon_move_pokemon_id_move_id_key" ON "pokemon_move"("pokemon_id", "move_id");
 
 -- AddForeignKey
 ALTER TABLE "move" ADD CONSTRAINT "move_type_id_fkey" FOREIGN KEY ("type_id") REFERENCES "type"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -123,7 +128,7 @@ ALTER TABLE "stat" ADD CONSTRAINT "stat_pokemonId_fkey" FOREIGN KEY ("pokemonId"
 ALTER TABLE "pokemon" ADD CONSTRAINT "pokemon_type_id_fkey" FOREIGN KEY ("type_id") REFERENCES "type"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "pokemon" ADD CONSTRAINT "pokemon_secondary_type_id_fkey" FOREIGN KEY ("secondary_type_id") REFERENCES "type"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "pokemon" ADD CONSTRAINT "pokemon_secondary_type_id_fkey" FOREIGN KEY ("secondary_type_id") REFERENCES "type"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "pokemon_ability" ADD CONSTRAINT "pokemon_ability_pokemon_id_fkey" FOREIGN KEY ("pokemon_id") REFERENCES "pokemon"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
