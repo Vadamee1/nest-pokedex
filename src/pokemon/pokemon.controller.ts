@@ -1,4 +1,4 @@
-import {
+/* import {
   Controller,
   Get,
   Post,
@@ -41,3 +41,4 @@ export class PokemonController {
     return this.pokemonService.remove(id);
   }
 }
+ */

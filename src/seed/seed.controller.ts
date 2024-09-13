@@ -1,0 +1,16 @@
+import { Controller, Get } from '@nestjs/common';
+import { SeedService } from './seed.service';
+
+@Controller('seed')
+export class SeedController {
+  constructor(private readonly seedService: SeedService) {}
+
+  @Get()
+  async executeSeed() {
+    await this.seedService.typeSeed();
+    await this.seedService.moveSeed();
+    await this.seedService.abilitySeed();
+    await this.seedService.pokemonSeed();
+    return 'all databases are seeding';
+  }
+}

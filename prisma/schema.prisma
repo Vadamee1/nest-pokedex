@@ -7,10 +7,128 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Ability {
+  id             Int              @id
+  name           String           @db.VarChar(50)
+  effect         String?
+  shortEffect    String?          @map("short_effect")
+  effectChange   String?          @map("effect_change")
+  PokemonAbility PokemonAbility[]
+
+  @@map("ability")
+}
+
+model Move {
+  id          Int           @id
+  name        String
+  damageClass String        @map("damage_class")
+  effect      String
+  power       Int?
+  pp          Int
+  priority    Int
+  typeId      Int           @map("type_id")
+  type        Type          @relation(fields: [typeId], references: [id])
+  PokemonMove PokemonMove[]
+
+  @@map("move")
+}
+
+model Sprite {
+  id                        Int      @id
+  backDefault               String   @map("back_default") @db.VarChar(255)
+  backFemale                String?  @map("back_female") @db.VarChar(255)
+  backShiny                 String   @map("back_shiny") @db.VarChar(255)
+  backShinyFemale           String?  @map("back_shiny_female") @db.VarChar(255)
+  frontDefault              String   @map("front_default") @db.VarChar(255)
+  frontFemale               String?  @map("front_female") @db.VarChar(255)
+  frontShiny                String   @map("front_shiny") @db.VarChar(255)
+  frontShinyFemale          String?  @map("front_shiny_female") @db.VarChar(255)
+  frontDreamWolrd           String   @map("front_dream_world") @db.VarChar(255)
+  frontFemaleDreamWorld     String?  @map("back_female_dream_world") @db.VarChar(255)
+  frontDefaultHome          String   @map("front_default_home") @db.VarChar(255)
+  frontFemaleHome           String?  @map("front_female_home") @db.VarChar(255)
+  frontShinyHome            String   @map("front_shiny_home") @db.VarChar(255)
+  frontOfficialArtwork      String   @map("front_official_artwork") @db.VarChar(255)
+  frontShinyOfficialArtwork String   @map("front_shiny_official_artwork") @db.VarChar(255)
+  backDefaultShowdown       String   @map("back_default_showdown") @db.VarChar(255)
+  backFemaleShowdown        String?  @map("back_female_showdown") @db.VarChar(255)
+  backShinyShowdown         String   @map("back_shiny_showdown") @db.VarChar(255)
+  backShinyFemaleShowdown   String?  @map("back_shiny_female_showdown") @db.VarChar(255)
+  frontDefaultShowdown      String   @map("fronr_default_showdown") @db.VarChar(255)
+  frontFemaleShowdown       String?  @map("front_female_showdown") @db.VarChar(255)
+  frontShinyShowdown        String   @map("front_shiny_showdown") @db.VarChar(255)
+  frontShinyFemaleSHowdown  String?  @map("front_shiny_female_showdown") @db.VarChar(255)
+  pokemonId                 String?
+  pokemon                   Pokemon? @relation(fields: [pokemonId], references: [id])
+
+  @@map("sprite")
+}
+
+model Stat {
+  id             Int      @id
+  hp             Int
+  attack         Int
+  defense        Int
+  specialAttack  Int      @map("special_attack")
+  specialDefense Int      @map("special_deefense")
+  speed          Int
+  pokemonId      String?
+  pokemon        Pokemon? @relation(fields: [pokemonId], references: [id])
+
+  @@map("stat")
+}
+
+model Type {
+  id                   Int       @id
+  name                 String    @db.VarChar(20)
+  icon                 String    @db.VarChar(255)
+  PokemonType          Pokemon[] @relation("PokemonType")
+  SecondaryPokemonType Pokemon[] @relation("SecondaryPokemonType")
+  Move                 Move[]
+
+  @@map("type")
+}
+
 model Pokemon {
-  id         String @id @default(uuid())
-  name       String @unique @db.VarChar(100)
-  numPokedex Int    @unique @map("num_pokedex")
+  id              String @id @default(uuid())
+  name            String @unique @db.VarChar(100)
+  numPokedex      Int    @unique @map("num_pokedex")
+  height          Int
+  weight          Int
+  typeId          Int    @map("type_id")
+  secondaryTypeId Int?   @map("secondary_type_id")
+
+  type          Type  @relation(fields: [typeId], references: [id], name: "PokemonType")
+  secondaryType Type? @relation(fields: [secondaryTypeId], references: [id], name: "SecondaryPokemonType")
+
+  Sprites        Sprite[]
+  Stat           Stat[]
+  PokemonAbility PokemonAbility[]
+  PokemonMove    PokemonMove[]
 
   @@map("pokemon")
+}
+
+model PokemonAbility {
+  id        Int    @id @default(autoincrement())
+  pokemonId String @map("pokemon_id")
+  abilityId Int    @map("ability_id")
+
+  pokemon Pokemon @relation(fields: [pokemonId], references: [id])
+  ability Ability @relation(fields: [abilityId], references: [id])
+
+  @@unique([abilityId, pokemonId])
+  @@map("pokemon_ability")
+}
+
+model PokemonMove {
+  id        Int    @id @default(autoincrement())
+  pokemonId String @map("pokemon_id")
+  moveId    Int    @map("move_id")
+
+  pokemon Pokemon @relation(fields: [pokemonId], references: [id])
+  move    Move    @relation(fields: [moveId], references: [id])
+
+  @@unique([pokemonId, moveId])
+  @@map("pokemon_move")
 }
